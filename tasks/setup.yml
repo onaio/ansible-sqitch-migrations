@@ -1,0 +1,26 @@
+---
+- name: Add system group
+  group:
+    name: "{{ database_migrations_system_user }}"
+    state: present
+
+- name: Add system user
+  user:
+    name: "{{ database_migrations_system_group }}"
+    shell: /bin/bash
+    group: "{{ database_migrations_system_user }}"
+    append: true
+    create_home: "{{ database_migrations_system_user_create_home | bool }}"
+
+- name: Install system-wide dependencies
+  apt:
+    name: "{{ database_migration_system_dependencies }}"
+    state: latest
+    update_cache: yes
+    cache_valid_time: 600
+
+- name: Clone repositories
+  include_tasks: clone.yml
+  with_items: '{{ database_migration_repositories }}'
+  loop_control:
+    loop_var: repo

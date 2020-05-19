@@ -1,2 +1,3 @@
 ---
-# tasks file for role
+- include: setup.yml
+  tags: setup
