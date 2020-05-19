@@ -1,16 +1,27 @@
 ---
 galaxy_info:
-  role_name: ""
+  role_name: "database-migrations"
   author: Ona Engineering
-  description: your role description
+  description: Simple role to run database migrations
   company: Ona Systems Inc
   license: Apache-2.0
   min_ansible_version: 2.8
-  galaxy_tags: []
+  galaxy_tags:
+    - sqitch
+    - database
+    - migrations
   platforms:
     - name: Ubuntu
       versions:
         - 16.04
         - 18.04
 
-dependencies: []
+dependencies:
+  - role: onaio.sqitch
+    become: true
+    become_user: "root"
+    vars:
+      - sqitch_database_support:
+          - PostgreSQL
+    tags:
+      - sqitch
