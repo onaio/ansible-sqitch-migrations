@@ -4,4 +4,4 @@
   tasks:
     - name: "Include role"
       include_role:
-        name: "ansible-role"
+        name: "ansible-database-migrations"
