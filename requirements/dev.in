@@ -1,0 +1,7 @@
+molecule[docker,lint]
+flake8
+pylint
+pycodestyle
+pydocstyle
+ansible
+ipdb
