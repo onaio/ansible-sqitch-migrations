@@ -14,10 +14,19 @@
 
 - name: Install system-wide dependencies
   apt:
-    name: "{{ database_migration_system_dependencies }}"
+    name: "{{ database_migrations_system_dependencies }}"
     state: present
     update_cache: true
     cache_valid_time: 600
+
+- name: Copy pgpass credentials
+  template:
+    src: "pgpass.j2"
+    dest: "{{ database_migrations_home }}/.pgpass"
+    owner: "{{ database_migrations_system_user }}"
+    group: "{{ database_migrations_system_group }}"
+    mode: "600"
+  when: database_migrations_pgpass_credentials|length > 0
 
 - name: Clone repositories
   include_tasks: clone.yml

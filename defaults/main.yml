@@ -2,8 +2,12 @@
 database_migrations_system_user: canopy
 database_migrations_system_group: canopy
 database_migrations_system_user_create_home: true
+database_migrations_home: "/home/{{ database_migrations_system_user }}"
 
-database_migration_system_dependencies:
+database_migrations_system_dependencies:
   - git
 
-database_migration_repositories:
+database_migrations_repositories:
+
+database_migrations_pgpass_credentials:
+
