@@ -18,6 +18,8 @@
     state: present
     update_cache: true
     cache_valid_time: 600
+  when:
+    - database_migrations_system_dependencies | length > 0
 
 - name: Copy pgpass credentials
   template:
@@ -26,10 +28,13 @@
     owner: "{{ database_migrations_system_user }}"
     group: "{{ database_migrations_system_group }}"
     mode: "600"
-  when: database_migrations_pgpass_credentials|length > 0
+  when:
+    - database_migrations_pgpass_credentials | length > 0
 
 - name: Clone repositories
   include_tasks: clone.yml
-  with_items: '{{ database_migration_repositories }}'
+  with_items: '{{ database_migrations_repositories }}'
   loop_control:
     loop_var: repo
+  when:
+    - database_migrations_repositories | length > 0

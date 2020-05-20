@@ -7,7 +7,7 @@ database_migrations_home: "/home/{{ database_migrations_system_user }}"
 database_migrations_system_dependencies:
   - git
 
-database_migrations_repositories:
+database_migrations_repositories: []  # set the default so that it is not inferred to be None
 
-database_migrations_pgpass_credentials:
+database_migrations_pgpass_credentials: []  # set the default so that it is not inferred to be None
 
