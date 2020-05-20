@@ -5,3 +5,11 @@
     - name: "Include role"
       include_role:
         name: "ansible-database-migrations"
+      vars:
+        - database_migration_system_dependencies:
+            - git
+            - postgresql-10-postgis-2.4
+        - database_migration_repositories:
+            - url: git@github.com:onaio/data-solutions.git
+              destination: "/home/{{ database_migrations_system_user }}/data-solutions"
+              version: 2b7089f7aa73a55f6b40685b3a040314906597ca

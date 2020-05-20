@@ -7,9 +7,3 @@ database_migration_system_dependencies:
   - git
 
 database_migration_repositories:
-  - url: git@github.com:onaio/data-solutions.git
-    destination: "/home/{{ database_migrations_system_user }}/data-solutions"
-    version: master
-  # - url: https://github.com/onaio/reveal-frontend
-  #   destination: "/home/{{ database_migrations_system_user }}/reveal-frontend"
-  #   version: master
