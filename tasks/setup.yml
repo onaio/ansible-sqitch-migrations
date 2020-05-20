@@ -15,8 +15,8 @@
 - name: Install system-wide dependencies
   apt:
     name: "{{ database_migration_system_dependencies }}"
-    state: latest
-    update_cache: yes
+    state: present
+    update_cache: true
     cache_valid_time: 600
 
 - name: Clone repositories
