@@ -1,6 +1,35 @@
 ---
 - name: Converge
   hosts: all
+  pre_tasks:
+    - name: Install apt pre-requisites
+      apt:
+        name: ["gnupg", "acl", "python-psycopg2", "python3-psycopg2"]
+        state: present
+        update_cache: true
+        cache_valid_time: 600
+      become: true
+    - name: "Install postgres"
+      include_role:
+        name: "ANXS.postgresql"
+      vars:
+        - postgresql_version: 10
+        - postgresql_ext_install_postgis: true
+        - postgresql_ext_postgis_version: "2.4"
+        - postgresql_users:
+            - name: admin
+              pass: hunter2
+              encrypted: true
+            - name: regular
+              pass: hunter2
+              encrypted: true
+        - postgresql_databases:
+            - name: productiondb
+              owner: admin
+        - postgresql_user_privileges:
+            - name: regular
+              db: productiondb
+              priv: "ALL"
   tasks:
     - name: "Include role"
       include_role:
@@ -8,7 +37,6 @@
       vars:
         - database_migrations_system_dependencies:
             - git
-            - postgresql-10-postgis-2.4
         - database_migrations_repositories:
             - url: git@github.com:onaio/data-solutions.git
               destination: "{{ database_migrations_home }}/data-solutions"
