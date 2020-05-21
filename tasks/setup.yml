@@ -10,14 +10,14 @@
     shell: /bin/bash
     group: "{{ database_migrations_system_user }}"
     append: true
-    create_home: "{{ database_migrations_system_user_create_home | bool }}"
+    create_home: true
 
 - name: Install system-wide dependencies
   apt:
     name: "{{ database_migrations_system_dependencies }}"
     state: present
     update_cache: true
-    cache_valid_time: 600
+    cache_valid_time: "600"
   when:
     - database_migrations_system_dependencies | length > 0
 
