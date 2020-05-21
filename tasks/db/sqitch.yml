@@ -1,6 +1,6 @@
 ---
 - name: Run migration
-  command: sqitch --registry {{ item.registry }} deploy -t db:{{ item.engine }}://{{ database_migrations_db_connections[plan.key].user }}@{{ database_migrations_db_connections[plan.key].host }}:{{ database_migrations_db_connections[plan.key].port }}/{{ database_migrations_db_connections[plan.key].database }} {{ item.extra_args }}  # noqa 301 204
+  command: sqitch --registry {{ item.registry | default('sqitch') }} deploy -t db:{{ item.engine | default('pg') }}://{{ database_migrations_db_connections[plan.key].user }}@{{ database_migrations_db_connections[plan.key].host }}:{{ database_migrations_db_connections[plan.key].port }}/{{ database_migrations_db_connections[plan.key].database }} {{ item.extra_args | default('--verify') }}  # noqa 301 204
   args:
     chdir: "{{ item.directory }}"
   become: true
