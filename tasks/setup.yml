@@ -29,7 +29,8 @@
     group: "{{ database_migrations_system_group }}"
     mode: "600"
   when:
-    - database_migrations_pgpass_credentials | length > 0
+    - database_migrations_db_connections.values() | length > 0
+    - database_migrations_create_pgpass == True
 
 - name: Clone repositories
   include_tasks: clone.yml
@@ -38,3 +39,12 @@
     loop_var: repo
   when:
     - database_migrations_repositories | length > 0
+
+- name: Setup database
+  include_tasks: db/setup.yml
+  loop: '{{ database_migrations_sql_files_to_process_for_setup | dict2items }}'
+  loop_control:
+    loop_var: sql_item
+  when:
+    - database_migrations_db_connections.values() | length > 0
+    - database_migrations_sql_files_to_process_for_setup.values() | length > 0
