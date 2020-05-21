@@ -1,0 +1,9 @@
+---
+- name: Run sqitch migrations
+  include_tasks: db/sqitch.yml
+  loop: '{{ database_migrations_sqitch_plans | dict2items }}'
+  loop_control:
+    loop_var: plan
+  when:
+    - database_migrations_db_connections.values() | length > 0
+    - database_migrations_sqitch_plans.values() | length > 0

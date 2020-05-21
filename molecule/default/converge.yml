@@ -65,3 +65,11 @@
         - database_migrations_sql_files_to_process_for_setup:
             db_admin:
               - "{{ database_migrations_home }}/data-solutions/OpenSRP/2-reveal/setup/extensions.sql"
+        - database_migrations_sqitch_plans:
+            db_user:
+              - directory: "{{ database_migrations_home }}/data-solutions/examples/sqitch_test"
+                registry: sqitch
+                extra_args: --verify
+              - directory: "{{ database_migrations_home }}/data-solutions/1-utils"
+                registry: sqitch_test
+                extra_args: --verify --set schema=test

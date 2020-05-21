@@ -1,3 +1,5 @@
 ---
 - include: setup.yml
   tags: setup
+- include: migrate.yml
+  tags: sqitch, migrations
