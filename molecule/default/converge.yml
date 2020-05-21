@@ -34,6 +34,10 @@
             - name: regular
               db: productiondb
               priv: "ALL"
+            - name: admin
+              db: productiondb
+              priv: "ALL"
+              role_attr_flags: "SUPERUSER"
   tasks:
     - name: "Include role"
       include_role:
@@ -41,10 +45,23 @@
       vars:
         - database_migrations_system_dependencies:
             - git
-        - database_migrations_pgpass_credentials:
-            - localhost:5432:productiondb:admin:hunter2
-            - localhost:5432:productiondb:regular:hunter2
         - database_migrations_repositories:
             - url: git@github.com:onaio/data-solutions.git
               destination: "{{ database_migrations_home }}/data-solutions"
               version: 2b7089f7aa73a55f6b40685b3a040314906597ca
+        - database_migrations_db_connections:
+            db_admin:
+              user: admin
+              password: hunter2
+              host: localhost
+              port: 5432
+              database: productiondb
+            db_user:
+              user: regular
+              password: hunter2
+              host: localhost
+              port: 5432
+              database: productiondb
+        - database_migrations_sql_files_to_process_for_setup:
+            db_admin:
+              - "{{ database_migrations_home }}/data-solutions/OpenSRP/2-reveal/setup/extensions.sql"
