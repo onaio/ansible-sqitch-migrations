@@ -30,7 +30,7 @@
     mode: "600"
   when:
     - database_migrations_db_connections.values() | length > 0
-    - database_migrations_create_pgpass == True
+    - database_migrations_create_pgpass | bool
 
 - name: Clone repositories
   include_tasks: clone.yml
