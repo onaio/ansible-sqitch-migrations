@@ -1,9 +1,14 @@
 ---
-# This is a playbook to execute Ansible tests.
-
 - name: Verify
   hosts: all
   tasks:
-    - name: Example assertion
+    - name: Verify sqitch migrations
+      shell: find . -iname sqitch.conf -print0 | sort -zn | xargs -I {} -0 bash -c 'cd `dirname {}` && pwd && sqitch --registry sqitch_test deploy -t db:pg://regular@localhost/productiondb --verify --set schema=test'  # noqa 301
+      register: sqitch_result
+      args:
+        chdir: /home/nomad/reveal
+      become: true
+      become_user: nomad
+    - name: Verify return code
       assert:
-        that: true
+        that: sqitch_result.rc == 0
