@@ -30,7 +30,6 @@
   when:
     - item is defined
     - item != None
-    - item != ""
   with_items:
     - "{{ database_migrations_log_path }}"
 

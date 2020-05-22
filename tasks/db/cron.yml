@@ -1,6 +1,6 @@
 ---
 - name: Set cron vars for {{ job.key }}
-  include_tasks: db/cron_vars.yml
+  include_tasks: cron_vars.yml
 - name: Ensure log file exists
   file:
     state: touch
