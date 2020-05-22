@@ -1,14 +1,53 @@
 ---
+# user
 database_migrations_system_user: canopy
 database_migrations_system_group: canopy
 database_migrations_home: "/home/{{ database_migrations_system_user }}"
+
+# logs
 database_migrations_log_path: "/var/log/database_migrations"
 
+# system-wide dependencies
 database_migrations_system_dependencies:
   - git
+
+# git repositories to clone: the database migrations we want to run are located here
+# database_migrations_repositories:
+#   - url: git@github.com:onaio/data-solutions.git
+#     destination: "{{ database_migrations_home }}/data-solutions"
+#     version: master
 database_migrations_repositories: []
+
+# database connections to use
+# database_migrations_db_connections:
+#   db_admin_user:  --> used to identify this particular connection
+#     user: db_username
+#     password: hunter2
+#     host: localhost
+#     port: 5432
+#     database: dbname
 database_migrations_db_connections: {}
-database_migrations_create_pgpass: true
+
+# Files containing sequel queries that should be run BEFORE database migrations
+# database_migrations_sql_for_setup:
+#   db_admin_user:  --> used to identify the db connection to use
+#     - absolute-path-to-file-containing-sql
 database_migrations_sql_for_setup: {}
+
+# The actual Sqitch database migrations to be run
+# database_migrations_sqitch_plans:
+#   db_admin_user:  --> used to identify the db connection to use
+#     - directory: "{{ database_migrations_home }}/data-solutions/examples/sqitch_test"  --> directory in which a sqitch plan is located
+#     - directory: "{{ database_migrations_home }}/data-solutions/1-utils"
+#       registry: sqitch_test --> sqitch registry to use, optional, default is "sqitch"
+#       extra_args: --verify --set schema=test  --> extra args for sqitch deploy command, optional, default is "--verify"
+#       engine: pg  --> sqitch engine, optional, default is "pg"
 database_migrations_sqitch_plans: {}
+
+# Represents files containing SQL queries that should be executed periodically
+# database_migrations_sql_jobs:
+#   db_admin_user:  --> used to identify the db connection to use
+#     - file: "/tmp/test.sql"  -> absolute path to file containing sql to be run periodically
+#       schema: test  -> database schema for this to be run in
+#       minute: "*"  -> cron config for every minute
 database_migrations_sql_jobs: {}
