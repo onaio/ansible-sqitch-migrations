@@ -1,2 +1,3 @@
 ---
-# vars file for role
+# Create .pgpass file?
+database_migrations_create_pgpass: true
