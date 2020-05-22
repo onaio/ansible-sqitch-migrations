@@ -1,43 +1,43 @@
 ---
 - name: Converge
   hosts: all
-  # pre_tasks:
-  #   - name: Install apt pre-requisites
-  #     apt:
-  #       name: ["gnupg", "acl", "python-psycopg2", "python3-psycopg2"]
-  #       state: present
-  #       update_cache: true
-  #       cache_valid_time: 600
-  #     become: true
-  #   - name: "Install postgres"
-  #     include_role:
-  #       name: "ANXS.postgresql"
-  #     vars:
-  #       - postgresql_version: 10
-  #       - postgresql_ext_install_postgis: true
-  #       - postgresql_ext_postgis_version: "2.4"
-  #       - postgresql_ext_postgis_deps:
-  #           - libgeos-c1v5
-  #           - "postgresql-{{ postgresql_version }}-postgis-{{ postgresql_ext_postgis_version }}"
-  #           - "postgresql-{{ postgresql_version }}-postgis-scripts"
-  #       - postgresql_users:
-  #           - name: admin
-  #             pass: hunter2
-  #             encrypted: true
-  #           - name: regular
-  #             pass: hunter2
-  #             encrypted: true
-  #       - postgresql_databases:
-  #           - name: productiondb
-  #             owner: admin
-  #       - postgresql_user_privileges:
-  #           - name: regular
-  #             db: productiondb
-  #             priv: "ALL"
-  #           - name: admin
-  #             db: productiondb
-  #             priv: "ALL"
-  #             role_attr_flags: "SUPERUSER"
+  pre_tasks:
+    - name: Install apt pre-requisites
+      apt:
+        name: ["gnupg", "acl", "python-psycopg2", "python3-psycopg2"]
+        state: present
+        update_cache: true
+        cache_valid_time: 600
+      become: true
+    - name: "Install postgres"
+      include_role:
+        name: "ANXS.postgresql"
+      vars:
+        - postgresql_version: 10
+        - postgresql_ext_install_postgis: true
+        - postgresql_ext_postgis_version: "2.4"
+        - postgresql_ext_postgis_deps:
+            - libgeos-c1v5
+            - "postgresql-{{ postgresql_version }}-postgis-{{ postgresql_ext_postgis_version }}"
+            - "postgresql-{{ postgresql_version }}-postgis-scripts"
+        - postgresql_users:
+            - name: admin
+              pass: hunter2
+              encrypted: true
+            - name: regular
+              pass: hunter2
+              encrypted: true
+        - postgresql_databases:
+            - name: productiondb
+              owner: admin
+        - postgresql_user_privileges:
+            - name: regular
+              db: productiondb
+              priv: "ALL"
+            - name: admin
+              db: productiondb
+              priv: "ALL"
+              role_attr_flags: "SUPERUSER"
   tasks:
     - name: "Include role"
       include_role:
@@ -106,10 +106,11 @@
             db_user:
               - file: "{{ database_migrations_home }}/data-solutions/OpenSRP/2-reveal/jobs/materialized-views/refresh_jurisdictions_materialized_view.sql"
                 schema: test
-                minute: "1"
+                minute: "*"
               - file: "{{ database_migrations_home }}/data-solutions/OpenSRP/2-reveal/jobs/materialized-views/refresh_plans_materialzied_view.sql"
                 schema: test
-                hour: "1"
+                minute: "0"
+                hour: "*/2"
               - file: "{{ database_migrations_home }}/data-solutions/OpenSRP/2-reveal/jobs/materialized-views/refresh_reporting_lag.sql"
                 schema: test
                 month: "1"
