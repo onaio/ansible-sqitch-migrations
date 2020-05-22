@@ -2,6 +2,7 @@
 database_migrations_system_user: canopy
 database_migrations_system_group: canopy
 database_migrations_home: "/home/{{ database_migrations_system_user }}"
+database_migrations_log_path: "/var/log/database_migrations"
 
 database_migrations_system_dependencies:
   - git
