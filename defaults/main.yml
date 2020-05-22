@@ -8,5 +8,6 @@ database_migrations_system_dependencies:
 database_migrations_repositories: []
 database_migrations_db_connections: {}
 database_migrations_create_pgpass: true
-database_migrations_sql_files_to_process_for_setup: {}
+database_migrations_sql_for_setup: {}
 database_migrations_sqitch_plans: {}
+database_migrations_sql_jobs: {}
