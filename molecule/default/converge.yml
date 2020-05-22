@@ -46,9 +46,9 @@
         - database_migrations_system_dependencies:
             - git
         - database_migrations_repositories:
-            - url: git@github.com:onaio/data-solutions.git
-              destination: "{{ database_migrations_home }}/data-solutions"
-              version: 2b7089f7aa73a55f6b40685b3a040314906597ca
+            - url: git@github.com:OpenSRP/opensrp-reveal-datawarehouse.git
+              destination: "{{ database_migrations_home }}/reveal"
+              version: e54ff11badc6b5a1dbde23838bea30dc50b449a5
         - database_migrations_db_connections:
             db_admin:
               user: admin
@@ -64,56 +64,54 @@
               database: productiondb
         - database_migrations_sql_for_setup:
             db_admin:
-              - "{{ database_migrations_home }}/data-solutions/OpenSRP/2-reveal/setup/extensions.sql"
+              - "{{ database_migrations_home }}/reveal/3-reveal/setup/extensions.sql"
         - database_migrations_sqitch_plans:
             db_user:
-              - directory: "{{ database_migrations_home }}/data-solutions/examples/sqitch_test"
-              - directory: "{{ database_migrations_home }}/data-solutions/1-utils"
+              - directory: "{{ database_migrations_home }}/reveal/1-utils"
                 registry: sqitch_test
                 extra_args: --verify --set schema=test
-                engine: pg
-              - directory: "{{ database_migrations_home }}/data-solutions/OpenSRP/1-common-migrations/1-transaction-tables"
+              - directory: "{{ database_migrations_home }}/reveal/2-common-migrations/1-transaction-tables"
                 registry: sqitch_test
                 extra_args: --verify --set schema=test
-              - directory: "{{ database_migrations_home }}/data-solutions/OpenSRP/1-common-migrations/2-raw-tables"
+              - directory: "{{ database_migrations_home }}/reveal/2-common-migrations/2-raw-tables"
                 registry: sqitch_test
                 extra_args: --verify --set schema=test
-              - directory: "{{ database_migrations_home }}/data-solutions/OpenSRP/2-reveal/migrations/1-raw_tables"
+              - directory: "{{ database_migrations_home }}/reveal/3-reveal/migrations/1-raw_tables"
                 registry: sqitch_test
                 extra_args: --verify --set schema=test
-              - directory: "{{ database_migrations_home }}/data-solutions/OpenSRP/2-reveal/migrations/2-transaction_tables"
+              - directory: "{{ database_migrations_home }}/reveal/3-reveal/migrations/2-transaction_tables"
                 registry: sqitch_test
                 extra_args: --verify --set schema=test
-              - directory: "{{ database_migrations_home }}/data-solutions/OpenSRP/2-reveal/migrations/3-views"
+              - directory: "{{ database_migrations_home }}/reveal/3-reveal/migrations/3-views"
                 registry: sqitch_test
                 extra_args: --verify --set schema=test
-              - directory: "{{ database_migrations_home }}/data-solutions/OpenSRP/2-reveal/migrations/4-FI/1-Thailand-2019"
+              - directory: "{{ database_migrations_home }}/reveal/3-reveal/migrations/4-FI/1-Thailand-2019"
                 registry: sqitch_test
                 extra_args: --verify --set schema=test
-              - directory: "{{ database_migrations_home }}/data-solutions/OpenSRP/2-reveal/migrations/5-IRS/1-generic"
+              - directory: "{{ database_migrations_home }}/reveal/3-reveal/migrations/5-IRS/1-generic"
                 registry: sqitch_test
                 extra_args: --verify --set schema=test
-              - directory: "{{ database_migrations_home }}/data-solutions/OpenSRP/2-reveal/migrations/5-IRS/2-Zambia-2019"
+              - directory: "{{ database_migrations_home }}/reveal/3-reveal/migrations/5-IRS/2-Zambia-2019"
                 registry: sqitch_test
                 extra_args: --verify --set schema=test
-              - directory: "{{ database_migrations_home }}/data-solutions/OpenSRP/2-reveal/migrations/5-IRS/3-Namibia-2019"
+              - directory: "{{ database_migrations_home }}/reveal/3-reveal/migrations/5-IRS/3-Namibia-2019"
                 registry: sqitch_test
                 extra_args: --verify --set schema=test
-              # - directory: "{{ database_migrations_home }}/data-solutions/OpenSRP/2-reveal/migrations/99-monitoring"
-              #   registry: sqitch_test
-              #   extra_args: --verify --set schema=test
+              - directory: "{{ database_migrations_home }}/reveal/3-reveal/migrations/99-monitoring"
+                registry: sqitch_test
+                extra_args: --verify --set schema=test
         - database_migrations_sql_jobs:
             db_user:
-              - file: "{{ database_migrations_home }}/data-solutions/OpenSRP/2-reveal/jobs/materialized-views/refresh_jurisdictions_materialized_view.sql"
+              - file: "{{ database_migrations_home }}/reveal/3-reveal/jobs/materialized-views/refresh_jurisdictions_materialized_view.sql"
                 schema: test
                 minute: "*"
-              - file: "{{ database_migrations_home }}/data-solutions/OpenSRP/2-reveal/jobs/materialized-views/refresh_plans_materialzied_view.sql"
+              - file: "{{ database_migrations_home }}/reveal/3-reveal/jobs/materialized-views/refresh_plans_materialzied_view.sql"
                 schema: test
                 minute: "0"
                 hour: "*/2"
-              - file: "{{ database_migrations_home }}/data-solutions/OpenSRP/2-reveal/jobs/materialized-views/refresh_reporting_lag.sql"
+              - file: "{{ database_migrations_home }}/reveal/3-reveal/jobs/materialized-views/refresh_reporting_lag.sql"
                 schema: test
                 month: "1"
-              - file: "{{ database_migrations_home }}/data-solutions/OpenSRP/2-reveal/jobs/materialized-views/refresh_reporting_time.sql"
+              - file: "{{ database_migrations_home }}/reveal/3-reveal/jobs/materialized-views/refresh_reporting_time.sql"
                 schema: test
                 weekday: "0"
