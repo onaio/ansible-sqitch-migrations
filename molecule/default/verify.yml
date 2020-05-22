@@ -12,3 +12,12 @@
     - name: Verify return code
       assert:
         that: sqitch_result.rc == 0
+    - name: Check content of pgpass file
+      replace:
+        path: /home/nomad/pgpass
+        regexp: |
+          localhost:5432:productiondb:admin:hunter2
+          localhost:5432:productiondb:regular:hunter2
+      check_mode: yes
+      register: pgpass_exists
+      failed_when: pgpass_exists is changed
