@@ -18,6 +18,25 @@
         regexp: |
           localhost:5432:productiondb:admin:hunter2
           localhost:5432:productiondb:regular:hunter2
-      check_mode: yes
+      check_mode: true
       register: pgpass_exists
       failed_when: pgpass_exists is changed
+    - name: Check content of cron file
+      replace:
+        path: /etc/cron.d/db_user
+        regexp: |
+          PGPORT=5432
+          PGHOST=localhost
+          PGDATABASE=productiondb
+          PGUSER=regular
+          #Ansible: /home/nomad/reveal/3-reveal/jobs/materialized-views/refresh_jurisdictions_materialized_view.sql
+          * * * * * nomad PGOPTIONS=--search_path=test psql -f /home/nomad/reveal/3-reveal/jobs/materialized-views/refresh_jurisdictions_materialized_view.sql >> /var/log/database_migrations/db_user.log 2>&1
+          #Ansible: /home/nomad/reveal/3-reveal/jobs/materialized-views/refresh_plans_materialzied_view.sql
+          0 */2 * * * nomad PGOPTIONS=--search_path=test psql -f /home/nomad/reveal/3-reveal/jobs/materialized-views/refresh_plans_materialzied_view.sql >> /var/log/database_migrations/db_user.log 2>&1
+          #Ansible: /home/nomad/reveal/3-reveal/jobs/materialized-views/refresh_reporting_lag.sql
+          * * * 1 * nomad PGOPTIONS=--search_path=test psql -f /home/nomad/reveal/3-reveal/jobs/materialized-views/refresh_reporting_lag.sql >> /var/log/database_migrations/db_user.log 2>&1
+          #Ansible: /home/nomad/reveal/3-reveal/jobs/materialized-views/refresh_reporting_time.sql
+          * * * * 0 nomad PGOPTIONS=--search_path=test psql -f /home/nomad/reveal/3-reveal/jobs/materialized-views/refresh_reporting_time.sql >> /var/log/database_migrations/db_user.log 2>&1
+      check_mode: true
+      register: cron_exists
+      failed_when: cron_exists is changed
