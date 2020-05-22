@@ -21,6 +21,19 @@
   when:
     - database_migrations_system_dependencies | length > 0
 
+- name: Ensure required directories are present
+  file:
+    state: directory
+    owner: "{{ database_migrations_system_user }}"
+    group: "{{ database_migrations_system_group }}"
+    path: "{{ item }}"
+  when:
+    - item is defined
+    - item != None
+    - item != ""
+  with_items:
+    - "{{ database_migrations_log_path }}"
+
 - name: Copy pgpass credentials
   template:
     src: "pgpass.j2"

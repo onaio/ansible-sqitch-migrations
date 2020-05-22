@@ -1,6 +1,18 @@
 ---
 - name: Set cron vars for {{ job.key }}
   include_tasks: db/cron_vars.yml
+- name: Ensure log file exists
+  file:
+    state: touch
+    owner: "{{ database_migrations_system_user }}"
+    group: "{{ database_migrations_system_group }}"
+    path: "{{ database_migrations_log_path }}/{{ job.key }}.log"
+  when:
+    - item is defined
+    - item != None
+    - item != ""
+  with_items:
+    - "{{ database_migrations_log_path }}"
 - name: Create cron jobs for {{ job.key }}
   cron:
     name: "{{ item.file }}"
@@ -9,7 +21,7 @@
     day: "{{ item.day | default('*') }}"
     hour: "{{ item.hour | default('*') }}"
     minute: "{{ item.minute | default('*') }}"
-    job: "PGOPTIONS=--search_path={{ item.schema | default('public') }} psql -f {{ item.file }} > /dev/null"
+    job: "PGOPTIONS=--search_path={{ item.schema | default('public') }} psql -f {{ item.file }} >> {{ database_migrations_log_path }}/{{ job.key }}.log 2>&1"
     state: present
     user: "{{ database_migrations_system_user }}"
     cron_file: "{{ job.key }}"
