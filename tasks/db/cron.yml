@@ -4,11 +4,11 @@
 - name: Create cron jobs for {{ job.key }}
   cron:
     name: "{{ item.file }}"
-    month: "*"
-    weekday: "*"
-    day: "*"
-    hour: "5,2"
-    minute: "0"
+    month: "{{ item.month | default('*') }}"
+    weekday: "{{ item.weekday | default('*') }}"
+    day: "{{ item.day | default('*') }}"
+    hour: "{{ item.hour | default('*') }}"
+    minute: "{{ item.minute | default('*') }}"
     job: "PGOPTIONS=--search_path={{ item.schema | default('public') }} psql -f {{ item.file }} > /dev/null"
     state: present
     user: "{{ database_migrations_system_user }}"

@@ -106,9 +106,13 @@
             db_user:
               - file: "{{ database_migrations_home }}/data-solutions/OpenSRP/2-reveal/jobs/materialized-views/refresh_jurisdictions_materialized_view.sql"
                 schema: test
+                minute: "1"
               - file: "{{ database_migrations_home }}/data-solutions/OpenSRP/2-reveal/jobs/materialized-views/refresh_plans_materialzied_view.sql"
                 schema: test
+                hour: "1"
               - file: "{{ database_migrations_home }}/data-solutions/OpenSRP/2-reveal/jobs/materialized-views/refresh_reporting_lag.sql"
                 schema: test
+                month: "1"
               - file: "{{ database_migrations_home }}/data-solutions/OpenSRP/2-reveal/jobs/materialized-views/refresh_reporting_time.sql"
                 schema: test
+                weekday: "0"
