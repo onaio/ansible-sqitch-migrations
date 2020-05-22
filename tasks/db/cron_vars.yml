@@ -1,0 +1,29 @@
+---
+- name: Set PGUSER for {{ conn.key }}
+  cronvar:
+    name: PGUSER
+    value: "{{ database_migrations_db_connections[conn.key].user }}"
+    user: "{{ database_migrations_system_user }}"
+    state: present
+    cron_file: "{{ conn.key }}"
+- name: Set PGDATABASE for {{ conn.key }}
+  cronvar:
+    name: PGDATABASE
+    value: "{{ database_migrations_db_connections[conn.key].database }}"
+    user: "{{ database_migrations_system_user }}"
+    state: present
+    cron_file: "{{ conn.key }}"
+- name: Set PGHOST for {{ conn.key }}
+  cronvar:
+    name: PGHOST
+    value: "{{ database_migrations_db_connections[conn.key].host }}"
+    user: "{{ database_migrations_system_user }}"
+    state: present
+    cron_file: "{{ conn.key }}"
+- name: Set PGPORT for {{ conn.key }}
+  cronvar:
+    name: PGPORT
+    value: "{{ database_migrations_db_connections[conn.key].port }}"
+    user: "{{ database_migrations_system_user }}"
+    state: present
+    cron_file: "{{ conn.key }}"

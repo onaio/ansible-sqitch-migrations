@@ -1,0 +1,13 @@
+---
+- name: Create cron job
+  cron:
+    name: "{{ item.file }}"
+    minute: "0"
+    hour: "5,2"
+    job: "PGOPTIONS=--search_path={{ item.schema | default('public') }} psql -f {{ item.file }} > /dev/null"
+    state: present
+    user: "{{ database_migrations_system_user }}"
+    cron_file: "{{ job.key }}"
+  with_items: "{{ job.value }}"
+  loop_control:
+    loop_var: item
