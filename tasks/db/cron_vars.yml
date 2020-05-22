@@ -1,29 +1,29 @@
 ---
-- name: Set PGUSER for {{ conn.key }}
+- name: Set PGUSER
   cronvar:
     name: PGUSER
-    value: "{{ database_migrations_db_connections[conn.key].user }}"
+    value: "{{ database_migrations_db_connections[job.key].user }}"
     user: "{{ database_migrations_system_user }}"
     state: present
-    cron_file: "{{ conn.key }}"
-- name: Set PGDATABASE for {{ conn.key }}
+    cron_file: "{{ job.key }}"
+- name: Set PGDATABASE
   cronvar:
     name: PGDATABASE
-    value: "{{ database_migrations_db_connections[conn.key].database }}"
+    value: "{{ database_migrations_db_connections[job.key].database }}"
     user: "{{ database_migrations_system_user }}"
     state: present
-    cron_file: "{{ conn.key }}"
-- name: Set PGHOST for {{ conn.key }}
+    cron_file: "{{ job.key }}"
+- name: Set PGHOST
   cronvar:
     name: PGHOST
-    value: "{{ database_migrations_db_connections[conn.key].host }}"
+    value: "{{ database_migrations_db_connections[job.key].host }}"
     user: "{{ database_migrations_system_user }}"
     state: present
-    cron_file: "{{ conn.key }}"
-- name: Set PGPORT for {{ conn.key }}
+    cron_file: "{{ job.key }}"
+- name: Set PGPORT
   cronvar:
     name: PGPORT
-    value: "{{ database_migrations_db_connections[conn.key].port }}"
+    value: "{{ database_migrations_db_connections[job.key].port }}"
     user: "{{ database_migrations_system_user }}"
     state: present
-    cron_file: "{{ conn.key }}"
+    cron_file: "{{ job.key }}"

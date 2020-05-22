@@ -1,11 +1,4 @@
 ---
-- name: Set cron vars
-  include_tasks: db/cron_vars.yml
-  loop: '{{ database_migrations_db_connections | dict2items }}'
-  loop_control:
-    loop_var: conn
-  when:
-    - database_migrations_db_connections.values() | length > 0
 - name: Create SQL cron jobs
   include_tasks: db/cron.yml
   loop: '{{ database_migrations_sql_jobs | dict2items }}'
