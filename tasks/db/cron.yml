@@ -7,12 +7,6 @@
     owner: "{{ database_migrations_system_user }}"
     group: "{{ database_migrations_system_group }}"
     path: "{{ database_migrations_log_path }}/{{ job.key }}.log"
-  when:
-    - item is defined
-    - item != None
-    - item != ""
-  with_items:
-    - "{{ database_migrations_log_path }}"
 - name: Create cron jobs for {{ job.key }}
   cron:
     name: "{{ item.file }}"
