@@ -1,43 +1,43 @@
 ---
 - name: Converge
   hosts: all
-  pre_tasks:
-    - name: Install apt pre-requisites
-      apt:
-        name: ["gnupg", "acl", "python-psycopg2", "python3-psycopg2"]
-        state: present
-        update_cache: true
-        cache_valid_time: 600
-      become: true
-    - name: "Install postgres"
-      include_role:
-        name: "ANXS.postgresql"
-      vars:
-        - postgresql_version: 10
-        - postgresql_ext_install_postgis: true
-        - postgresql_ext_postgis_version: "2.4"
-        - postgresql_ext_postgis_deps:
-            - libgeos-c1v5
-            - "postgresql-{{ postgresql_version }}-postgis-{{ postgresql_ext_postgis_version }}"
-            - "postgresql-{{ postgresql_version }}-postgis-scripts"
-        - postgresql_users:
-            - name: admin
-              pass: hunter2
-              encrypted: true
-            - name: regular
-              pass: hunter2
-              encrypted: true
-        - postgresql_databases:
-            - name: productiondb
-              owner: admin
-        - postgresql_user_privileges:
-            - name: regular
-              db: productiondb
-              priv: "ALL"
-            - name: admin
-              db: productiondb
-              priv: "ALL"
-              role_attr_flags: "SUPERUSER"
+  # pre_tasks:
+  #   - name: Install apt pre-requisites
+  #     apt:
+  #       name: ["gnupg", "acl", "python-psycopg2", "python3-psycopg2"]
+  #       state: present
+  #       update_cache: true
+  #       cache_valid_time: 600
+  #     become: true
+  #   - name: "Install postgres"
+  #     include_role:
+  #       name: "ANXS.postgresql"
+  #     vars:
+  #       - postgresql_version: 10
+  #       - postgresql_ext_install_postgis: true
+  #       - postgresql_ext_postgis_version: "2.4"
+  #       - postgresql_ext_postgis_deps:
+  #           - libgeos-c1v5
+  #           - "postgresql-{{ postgresql_version }}-postgis-{{ postgresql_ext_postgis_version }}"
+  #           - "postgresql-{{ postgresql_version }}-postgis-scripts"
+  #       - postgresql_users:
+  #           - name: admin
+  #             pass: hunter2
+  #             encrypted: true
+  #           - name: regular
+  #             pass: hunter2
+  #             encrypted: true
+  #       - postgresql_databases:
+  #           - name: productiondb
+  #             owner: admin
+  #       - postgresql_user_privileges:
+  #           - name: regular
+  #             db: productiondb
+  #             priv: "ALL"
+  #           - name: admin
+  #             db: productiondb
+  #             priv: "ALL"
+  #             role_attr_flags: "SUPERUSER"
   tasks:
     - name: "Include role"
       include_role:
@@ -62,7 +62,7 @@
               host: localhost
               port: 5432
               database: productiondb
-        - database_migrations_sql_files_to_process_for_setup:
+        - database_migrations_sql_for_setup:
             db_admin:
               - "{{ database_migrations_home }}/data-solutions/OpenSRP/2-reveal/setup/extensions.sql"
         - database_migrations_sqitch_plans:
@@ -72,3 +72,43 @@
                 registry: sqitch_test
                 extra_args: --verify --set schema=test
                 engine: pg
+              - directory: "{{ database_migrations_home }}/data-solutions/OpenSRP/1-common-migrations/1-transaction-tables"
+                registry: sqitch_test
+                extra_args: --verify --set schema=test
+              - directory: "{{ database_migrations_home }}/data-solutions/OpenSRP/1-common-migrations/2-raw-tables"
+                registry: sqitch_test
+                extra_args: --verify --set schema=test
+              - directory: "{{ database_migrations_home }}/data-solutions/OpenSRP/2-reveal/migrations/1-raw_tables"
+                registry: sqitch_test
+                extra_args: --verify --set schema=test
+              - directory: "{{ database_migrations_home }}/data-solutions/OpenSRP/2-reveal/migrations/2-transaction_tables"
+                registry: sqitch_test
+                extra_args: --verify --set schema=test
+              - directory: "{{ database_migrations_home }}/data-solutions/OpenSRP/2-reveal/migrations/3-views"
+                registry: sqitch_test
+                extra_args: --verify --set schema=test
+              - directory: "{{ database_migrations_home }}/data-solutions/OpenSRP/2-reveal/migrations/4-FI/1-Thailand-2019"
+                registry: sqitch_test
+                extra_args: --verify --set schema=test
+              - directory: "{{ database_migrations_home }}/data-solutions/OpenSRP/2-reveal/migrations/5-IRS/1-generic"
+                registry: sqitch_test
+                extra_args: --verify --set schema=test
+              - directory: "{{ database_migrations_home }}/data-solutions/OpenSRP/2-reveal/migrations/5-IRS/2-Zambia-2019"
+                registry: sqitch_test
+                extra_args: --verify --set schema=test
+              - directory: "{{ database_migrations_home }}/data-solutions/OpenSRP/2-reveal/migrations/5-IRS/3-Namibia-2019"
+                registry: sqitch_test
+                extra_args: --verify --set schema=test
+              # - directory: "{{ database_migrations_home }}/data-solutions/OpenSRP/2-reveal/migrations/99-monitoring"
+              #   registry: sqitch_test
+              #   extra_args: --verify --set schema=test
+        - database_migrations_sql_jobs:
+            db_user:
+              - file: "{{ database_migrations_home }}/data-solutions/OpenSRP/2-reveal/jobs/materialized-views/refresh_jurisdictions_materialized_view.sql"
+                schema: test
+              - file: "{{ database_migrations_home }}/data-solutions/OpenSRP/2-reveal/jobs/materialized-views/refresh_plans_materialzied_view.sql"
+                schema: test
+              - file: "{{ database_migrations_home }}/data-solutions/OpenSRP/2-reveal/jobs/materialized-views/refresh_reporting_lag.sql"
+                schema: test
+              - file: "{{ database_migrations_home }}/data-solutions/OpenSRP/2-reveal/jobs/materialized-views/refresh_reporting_time.sql"
+                schema: test
