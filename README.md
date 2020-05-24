@@ -7,9 +7,9 @@ The database setup process is in three stages:
 1. Set up
    - One or more repositories that contain database migrations are cloned.  Both private and public git repositories can be cloned.  Private repositories require that you have the relevant ssh key added to ssh-agent.
    - Create a [pgpass](https://www.postgresql.org/docs/9.3/libpq-pgpass.html) file to make authentication against the DB easy and standard throughout the role
-   - Execute any SQL queries that need to be run to set up the database
+   - Execute any SQL queries that need to be run to set up the database.  These may be things such as creating databases and database users, creating postgres extensions etc.
 2. Sqitch migrations - the sqitch migrations are deployed and verified.  The role is able to support running multiple sqitch migration plans, for different databases.
-3. Set up periodic jobs - Ensure any SQL queries that need to be run periodically are set up a cron jobs.
+3. Set up periodic jobs - Ensure any SQL queries that need to be run periodically are set up a cron jobs.  These may be queries such as a daily data dump, refreshing materialized views, etc.
 
 **Note**:
 
