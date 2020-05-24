@@ -4,8 +4,13 @@ database_migrations_system_user: nomad
 database_migrations_system_group: nomad
 database_migrations_home: "/home/{{ database_migrations_system_user }}"
 
+# system name
+# this var makes it possible to deploy multiple instances of this role on the same server
+# by giving each a different name so that things such as logs and configs don't class
+database_migrations_sys_name: database_migrations
+
 # logs
-database_migrations_log_path: "/var/log/database_migrations"  # where to keep logs
+database_migrations_log_path: "/var/log/{{ database_migrations_sys_name }}"  # where to keep logs
 
 # system-wide dependencies
 database_migrations_system_dependencies:
