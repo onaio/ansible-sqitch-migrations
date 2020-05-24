@@ -71,3 +71,20 @@
       become_user: nomad
       register: sql_cron
       failed_when: sql_cron.rc != 0
+
+    - name: Verify logrotate has been configured
+      replace:
+        path: /etc/logrotate.d/database_migrations
+        regexp: |
+          /var/log/database_migrations/*.log {
+              copytruncate
+              daily
+              rotate 52
+              compress
+              delaycompress
+              missingok
+              notifempty
+          }
+      check_mode: true
+      register: logrotate_exists
+      failed_when: logrotate_exists is changed

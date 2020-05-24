@@ -5,3 +5,5 @@
   tags: sqitch, migrations
 - include: jobs.yml
   tags: jobs, cron
+- include: configure.yml
+  tags: config
