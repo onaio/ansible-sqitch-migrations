@@ -10,3 +10,4 @@ Icon
 test
 *.pyc
 .venv
+.tox/
