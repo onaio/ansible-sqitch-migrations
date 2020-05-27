@@ -2,12 +2,12 @@
 - name: Run setup SQL
   command: psql -f {{ sql_file }}  # noqa 301
   environment:
-    PGUSER: "{{ database_migrations_db_connections[sql_item.key].user }}"
-    PGDATABASE: "{{ database_migrations_db_connections[sql_item.key].database }}"
-    PGHOST: "{{ database_migrations_db_connections[sql_item.key].host }}"
-    PGPORT: "{{ database_migrations_db_connections[sql_item.key].port }}"
+    PGUSER: "{{ sqitch_migrations_db_connections[sql_item.key].user }}"
+    PGDATABASE: "{{ sqitch_migrations_db_connections[sql_item.key].database }}"
+    PGHOST: "{{ sqitch_migrations_db_connections[sql_item.key].host }}"
+    PGPORT: "{{ sqitch_migrations_db_connections[sql_item.key].port }}"
   become: true
-  become_user: "{{ database_migrations_system_user }}"
+  become_user: "{{ sqitch_migrations_system_user }}"
   with_items: "{{ sql_item.value }}"
   loop_control:
     loop_var: sql_file

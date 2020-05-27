@@ -42,13 +42,13 @@
           PGDATABASE=productiondb
           PGUSER=regular
           #Ansible: /home/nomad/reveal/3-reveal/jobs/materialized-views/refresh_jurisdictions_materialized_view.sql
-          * * * * * nomad PGOPTIONS=--search_path=test psql -f /home/nomad/reveal/3-reveal/jobs/materialized-views/refresh_jurisdictions_materialized_view.sql >> /var/log/database_migrations/db_user.log 2>&1
+          * * * * * nomad PGOPTIONS=--search_path=test psql -f /home/nomad/reveal/3-reveal/jobs/materialized-views/refresh_jurisdictions_materialized_view.sql >> /var/log/sqitch_migrations/db_user.log 2>&1
           #Ansible: /home/nomad/reveal/3-reveal/jobs/materialized-views/refresh_plans_materialzied_view.sql
-          0 */2 * * * nomad PGOPTIONS=--search_path=test psql -f /home/nomad/reveal/3-reveal/jobs/materialized-views/refresh_plans_materialzied_view.sql >> /var/log/database_migrations/db_user.log 2>&1
+          0 */2 * * * nomad PGOPTIONS=--search_path=test psql -f /home/nomad/reveal/3-reveal/jobs/materialized-views/refresh_plans_materialzied_view.sql >> /var/log/sqitch_migrations/db_user.log 2>&1
           #Ansible: /home/nomad/reveal/3-reveal/jobs/materialized-views/refresh_reporting_lag.sql
-          * * * 1 * nomad PGOPTIONS=--search_path=test psql -f /home/nomad/reveal/3-reveal/jobs/materialized-views/refresh_reporting_lag.sql >> /var/log/database_migrations/db_user.log 2>&1
+          * * * 1 * nomad PGOPTIONS=--search_path=test psql -f /home/nomad/reveal/3-reveal/jobs/materialized-views/refresh_reporting_lag.sql >> /var/log/sqitch_migrations/db_user.log 2>&1
           #Ansible: /home/nomad/reveal/3-reveal/jobs/materialized-views/refresh_reporting_time.sql
-          * * * * 0 nomad PGOPTIONS=--search_path=test psql -f /home/nomad/reveal/3-reveal/jobs/materialized-views/refresh_reporting_time.sql >> /var/log/database_migrations/db_user.log 2>&1
+          * * * * 0 nomad PGOPTIONS=--search_path=test psql -f /home/nomad/reveal/3-reveal/jobs/materialized-views/refresh_reporting_time.sql >> /var/log/sqitch_migrations/db_user.log 2>&1
       check_mode: true
       register: cron_exists
       failed_when: cron_exists is changed
@@ -61,7 +61,7 @@
     # check that our periodic logs run by verifying that logs are created
     - name: Wait for SQL cron log to be populated
       wait_for:
-        path: /var/log/database_migrations/db_user.log
+        path: /var/log/sqitch_migrations/db_user.log
         search_regex: refresh_mat_view  # this comes from one of the queries run in the test
     # Finally we check that the query was applied correctly in the database
     # Incidentally, this also confirms that the .pgpass file works okay
@@ -74,9 +74,9 @@
 
     - name: Verify logrotate has been configured
       replace:
-        path: /etc/logrotate.d/database_migrations
+        path: /etc/logrotate.d/sqitch_migrations
         regexp: |
-          /var/log/database_migrations/*.log {
+          /var/log/sqitch_migrations/*.log {
               copytruncate
               daily
               rotate 52

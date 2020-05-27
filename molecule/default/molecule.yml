@@ -4,7 +4,7 @@ dependency:
 driver:
   name: docker
 platforms:
-  - name: database_migrations-ubuntu-18.04
+  - name: sqitch_migrations-ubuntu-18.04
     image: solita/ubuntu-systemd:18.04
     dockerfile: Dockerfile.j2
     privileged: true

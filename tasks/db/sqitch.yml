@@ -1,10 +1,10 @@
 ---
 - name: Run migration
-  command: sqitch --registry {{ item.registry | default('sqitch') }} deploy -t db:{{ item.engine | default('pg') }}://{{ database_migrations_db_connections[plan.key].user }}@{{ database_migrations_db_connections[plan.key].host }}:{{ database_migrations_db_connections[plan.key].port }}/{{ database_migrations_db_connections[plan.key].database }} {{ item.extra_args | default('--verify') }}  # noqa 301 204
+  command: sqitch --registry {{ item.registry | default('sqitch') }} deploy -t db:{{ item.engine | default('pg') }}://{{ sqitch_migrations_db_connections[plan.key].user }}@{{ sqitch_migrations_db_connections[plan.key].host }}:{{ sqitch_migrations_db_connections[plan.key].port }}/{{ sqitch_migrations_db_connections[plan.key].database }} {{ item.extra_args | default('--verify') }}  # noqa 301 204
   args:
     chdir: "{{ item.directory }}"
   become: true
-  become_user: "{{ database_migrations_system_user }}"
+  become_user: "{{ sqitch_migrations_system_user }}"
   with_items: "{{ plan.value }}"
   loop_control:
     loop_var: item

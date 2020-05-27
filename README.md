@@ -1,4 +1,4 @@
-# Ansible Database Migrations [![Build Status](https://github.com/onaio/ansible-database-migrations/workflows/CI/badge.svg)](https://github.com/onaio/ansible-database-migrations/actions?query=workflow%3ACI)
+# Ansible Sqitch Migrations [![Build Status](https://github.com/onaio/ansible-sqitch-migrations/workflows/CI/badge.svg)](https://github.com/onaio/ansible-sqitch-migrations/actions?query=workflow%3ACI)
 
 Use this role to set up a database using [sqitch](https://sqitch.org/) migrations.
 
@@ -20,57 +20,57 @@ The database setup process is in three stages:
 
 Some of the more important variables are briefly described below.  You can see all variables by looking at the [defaults/main.yml](defaults/main.yml) file.
 
-### database_migrations_system_user
+### sqitch_migrations_system_user
 
 This is the user which is used while running the role.  The default is "nomad" - you know, because they migrate :)
 
 ```yml
-database_migrations_system_user: nomad
+sqitch_migrations_system_user: nomad
 ```
 
-### database_migrations_home
+### sqitch_migrations_home
 
-This is a variable defined for convenience as it is used very often.  It defines the home directory of the `database_migrations_system_user`.
+This is a variable defined for convenience as it is used very often.  It defines the home directory of the `sqitch_migrations_system_user`.
 
 ```yml
-database_migrations_home: "/home/{{ database_migrations_system_user }}"
+sqitch_migrations_home: "/home/{{ sqitch_migrations_system_user }}"
 ```
 
-### database_migrations_system_dependencies
+### sqitch_migrations_system_dependencies
 
 This variable defines a list packages that should be installed as part of setting up the role.
 
 ```yml
 # system-wide dependencies
-database_migrations_system_dependencies:
+sqitch_migrations_system_dependencies:
   - git
 ```
 
-### database_migrations_log_path
+### sqitch_migrations_log_path
 
 This is the directory in which logs will be stored.
 
 ```yml
-database_migrations_log_path: "/var/log/database_migrations"
+sqitch_migrations_log_path: "/var/log/sqitch_migrations"
 ```
 
-### database_migrations_repositories
+### sqitch_migrations_repositories
 
 A list of git repositories to clone, the database migrations we want to run are located here.
 
 ```yml
-database_migrations_repositories:
+sqitch_migrations_repositories:
   - url: git@github.com:onaio/data-solutions.git
-    destination: "{{ database_migrations_home }}/data-solutions"
+    destination: "{{ sqitch_migrations_home }}/data-solutions"
     version: master
 ```
 
-### database_migrations_db_connections
+### sqitch_migrations_db_connections
 
 An object containing database connections to use when running the role.
 
 ```yml
-database_migrations_db_connections:
+sqitch_migrations_db_connections:
   db_admin_user:  # used to identify this particular connection
     user: db_username
     password: hunter2
@@ -85,26 +85,26 @@ database_migrations_db_connections:
     database: dbname2
 ```
 
-### database_migrations_sql_for_setup
+### sqitch_migrations_sql_for_setup
 
 An object describing files containing SQL queries that should be run BEFORE database migrations.
 
 ```yml
-database_migrations_sql_for_setup:
+sqitch_migrations_sql_for_setup:
   db_admin_user:  # used to identify the db connection to use
     - absolute-path-to-file-containing-sql
     - /tmp/some-file.sql
 ```
 
-### database_migrations_sqitch_plans
+### sqitch_migrations_sqitch_plans
 
 An object containing the actual sqitch database migrations to be run.
 
 ```yml
-database_migrations_sqitch_plans:
+sqitch_migrations_sqitch_plans:
   db_admin_user:  # used to identify the db connection to use
-    - directory: "{{ database_migrations_home }}/data-solutions/examples/sqitch_test"
-    - directory: "{{ database_migrations_home }}/data-solutions/1-utils"
+    - directory: "{{ sqitch_migrations_home }}/data-solutions/examples/sqitch_test"
+    - directory: "{{ sqitch_migrations_home }}/data-solutions/1-utils"
       registry: sqitch_test
       extra_args: --verify --set schema=test
       engine: pg
@@ -117,12 +117,12 @@ As you can tell, it is an object/dictionary where each entry contains a list of 
 - **extra_args**: (optional) extra args for sqitch deploy command, default is "--verify"
 - **engine**: (optional) database engine to use, default is pg
 
-### database_migrations_sql_jobs
+### sqitch_migrations_sql_jobs
 
 An object containing SQL queries that should be executed periodically.
 
 ```yml
-database_migrations_sql_jobs:
+sqitch_migrations_sql_jobs:
   db_admin_user:  # used to identify the db connection to use
     - file: "/tmp/test.sql"  # absolute path to file containing sql to be run periodically
       schema: test  # database schema for this to be run in
@@ -155,18 +155,18 @@ ansible-galaxy install -r requirements.yml
 ```yml
 - hosts: servers
   roles:
-    - role: ansible-database-migrations
+    - role: ansible-sqitch-migrations
       vars:
-        - database_migrations_system_dependencies:
+        - sqitch_migrations_system_dependencies:
             - git
-        - database_migrations_repositories:
+        - sqitch_migrations_repositories:
             - url: git@github.com:onaio/data-solutions.git
-              destination: "{{ database_migrations_home }}/data-solutions"
+              destination: "{{ sqitch_migrations_home }}/data-solutions"
               version: master
             - url: git@github.com:OpenSRP/opensrp-reveal-datawarehouse.git
-              destination: "{{ database_migrations_home }}/reveal-datawarehouse"
+              destination: "{{ sqitch_migrations_home }}/reveal-datawarehouse"
               version: master
-        - database_migrations_db_connections:
+        - sqitch_migrations_db_connections:
             db_admin:
               user: admin
               password: hunter2
@@ -179,58 +179,58 @@ ansible-galaxy install -r requirements.yml
               host: localhost
               port: 5432
               database: productiondb
-        - database_migrations_sql_for_setup:
+        - sqitch_migrations_sql_for_setup:
             db_admin:
-              - "{{ database_migrations_home }}/data-solutions/OpenSRP/2-reveal/setup/extensions.sql"
-        - database_migrations_sqitch_plans:
+              - "{{ sqitch_migrations_home }}/data-solutions/OpenSRP/2-reveal/setup/extensions.sql"
+        - sqitch_migrations_sqitch_plans:
             db_admin:
-              - directory: "{{ database_migrations_home }}/data-solutions/examples/sqitch_test"
+              - directory: "{{ sqitch_migrations_home }}/data-solutions/examples/sqitch_test"
             db_user:
-              - directory: "{{ database_migrations_home }}/data-solutions/1-utils"
+              - directory: "{{ sqitch_migrations_home }}/data-solutions/1-utils"
                 registry: sqitch_test
                 extra_args: --verify --set schema=test
                 engine: pg
-              - directory: "{{ database_migrations_home }}/data-solutions/OpenSRP/1-common-migrations/1-transaction-tables"
+              - directory: "{{ sqitch_migrations_home }}/data-solutions/OpenSRP/1-common-migrations/1-transaction-tables"
                 registry: sqitch_test
                 extra_args: --verify --set schema=test
-              - directory: "{{ database_migrations_home }}/data-solutions/OpenSRP/1-common-migrations/2-raw-tables"
+              - directory: "{{ sqitch_migrations_home }}/data-solutions/OpenSRP/1-common-migrations/2-raw-tables"
                 registry: sqitch_test
                 extra_args: --verify --set schema=test
-              - directory: "{{ database_migrations_home }}/data-solutions/OpenSRP/2-reveal/migrations/1-raw_tables"
+              - directory: "{{ sqitch_migrations_home }}/data-solutions/OpenSRP/2-reveal/migrations/1-raw_tables"
                 registry: sqitch_test
                 extra_args: --verify --set schema=test
-              - directory: "{{ database_migrations_home }}/data-solutions/OpenSRP/2-reveal/migrations/2-transaction_tables"
+              - directory: "{{ sqitch_migrations_home }}/data-solutions/OpenSRP/2-reveal/migrations/2-transaction_tables"
                 registry: sqitch_test
                 extra_args: --verify --set schema=test
-              - directory: "{{ database_migrations_home }}/data-solutions/OpenSRP/2-reveal/migrations/3-views"
+              - directory: "{{ sqitch_migrations_home }}/data-solutions/OpenSRP/2-reveal/migrations/3-views"
                 registry: sqitch_test
                 extra_args: --verify --set schema=test
-              - directory: "{{ database_migrations_home }}/data-solutions/OpenSRP/2-reveal/migrations/4-FI/1-Thailand-2019"
+              - directory: "{{ sqitch_migrations_home }}/data-solutions/OpenSRP/2-reveal/migrations/4-FI/1-Thailand-2019"
                 registry: sqitch_test
                 extra_args: --verify --set schema=test
-              - directory: "{{ database_migrations_home }}/data-solutions/OpenSRP/2-reveal/migrations/5-IRS/1-generic"
+              - directory: "{{ sqitch_migrations_home }}/data-solutions/OpenSRP/2-reveal/migrations/5-IRS/1-generic"
                 registry: sqitch_test
                 extra_args: --verify --set schema=test
-              - directory: "{{ database_migrations_home }}/data-solutions/OpenSRP/2-reveal/migrations/5-IRS/2-Zambia-2019"
+              - directory: "{{ sqitch_migrations_home }}/data-solutions/OpenSRP/2-reveal/migrations/5-IRS/2-Zambia-2019"
                 registry: sqitch_test
                 extra_args: --verify --set schema=test
-              - directory: "{{ database_migrations_home }}/data-solutions/OpenSRP/2-reveal/migrations/5-IRS/3-Namibia-2019"
+              - directory: "{{ sqitch_migrations_home }}/data-solutions/OpenSRP/2-reveal/migrations/5-IRS/3-Namibia-2019"
                 registry: sqitch_test
                 extra_args: --verify --set schema=test
-        - database_migrations_sql_jobs:
+        - sqitch_migrations_sql_jobs:
             db_user:
-              - file: "{{ database_migrations_home }}/data-solutions/OpenSRP/2-reveal/jobs/materialized-views/refresh_jurisdictions_materialized_view.sql"
+              - file: "{{ sqitch_migrations_home }}/data-solutions/OpenSRP/2-reveal/jobs/materialized-views/refresh_jurisdictions_materialized_view.sql"
                 schema: test
                 minute: "*"
-              - file: "{{ database_migrations_home }}/data-solutions/OpenSRP/2-reveal/jobs/materialized-views/refresh_plans_materialzied_view.sql"
+              - file: "{{ sqitch_migrations_home }}/data-solutions/OpenSRP/2-reveal/jobs/materialized-views/refresh_plans_materialzied_view.sql"
                 schema: test
                 minute: "0"
                 hour: "*/2"
             db_admin:
-              - file: "{{ database_migrations_home }}/data-solutions/OpenSRP/2-reveal/jobs/materialized-views/refresh_reporting_lag.sql"
+              - file: "{{ sqitch_migrations_home }}/data-solutions/OpenSRP/2-reveal/jobs/materialized-views/refresh_reporting_lag.sql"
                 schema: test
                 hour: "*/1"
-              - file: "{{ database_migrations_home }}/data-solutions/OpenSRP/2-reveal/jobs/materialized-views/refresh_reporting_time.sql"
+              - file: "{{ sqitch_migrations_home }}/data-solutions/OpenSRP/2-reveal/jobs/materialized-views/refresh_reporting_time.sql"
                 schema: test
 ```
 

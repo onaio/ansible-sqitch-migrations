@@ -1,8 +1,8 @@
 ---
 - name: Customize logrotate rules
   template:
-    src: etc/logrotate.d/database_migrations.j2
-    dest: "/etc/logrotate.d/{{ database_migrations_sys_name }}"
+    src: etc/logrotate.d/sqitch_migrations.j2
+    dest: "/etc/logrotate.d/{{ sqitch_migrations_sys_name }}"
     owner: root
     group: root
     mode: 0644

@@ -1,3 +1,3 @@
 ---
 # Create .pgpass file?
-database_migrations_create_pgpass: true
+sqitch_migrations_create_pgpass: true
