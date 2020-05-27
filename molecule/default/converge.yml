@@ -46,7 +46,7 @@
         - database_migrations_system_dependencies:
             - git
         - database_migrations_repositories:
-            - url: git@github.com:OpenSRP/opensrp-reveal-datawarehouse.git
+            - url: https://github.com/OpenSRP/opensrp-reveal-datawarehouse.git
               destination: "{{ database_migrations_home }}/reveal"
               version: e54ff11badc6b5a1dbde23838bea30dc50b449a5
         - database_migrations_db_connections:
