@@ -5,3 +5,4 @@ pycodestyle
 pydocstyle
 ansible
 ipdb
+tox

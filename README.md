@@ -244,10 +244,10 @@ Start by creating a virtual environment and installing python packages
 pip install -r requirements.txt
 ```
 
-Then to run the full test sequence
+Then to run the full test sequence:
 
 ```sh
-molecule test
+tox
 ```
 
 ## License
