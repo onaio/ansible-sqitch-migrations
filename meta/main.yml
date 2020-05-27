@@ -18,8 +18,6 @@ galaxy_info:
 
 dependencies:
   - role: onaio.sqitch
-    become: true
-    become_user: "root"
     vars:
       - sqitch_database_support:
           - PostgreSQL
