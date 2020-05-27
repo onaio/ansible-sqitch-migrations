@@ -9,10 +9,6 @@ platforms:
     dockerfile: Dockerfile.j2
     privileged: true
     command: /sbin/init
-    volumes:
-      - $SSH_AUTH_SOCK:/ssh-agent
-    env:
-      SSH_AUTH_SOCK: /ssh-agent
 provisioner:
   name: ansible
 lint: |
