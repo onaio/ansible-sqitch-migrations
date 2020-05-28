@@ -1,9 +1,90 @@
 ---
-# This is a playbook to execute Ansible tests.
-
 - name: Verify
   hosts: all
   tasks:
-    - name: Example assertion
+    # We check that the setup SQL query task was applied by ensuring that one of the
+    # queries run in the test was applied in the database.
+    # Incidentally, this also confirms that the .pgpass file works okay
+    - name: Verify that setup SQL query run correctly
+      command: psql -U regular -h localhost -c "select 1/count(*) from pg_extension where extname='unaccent'" productiondb
+      become: true
+      become_user: nomad
+      register: sql_setp
+      failed_when: sql_setp.rc != 0
+
+    - name: Verify sqitch migrations
+      shell: find . -iname sqitch.conf -print0 | sort -zn | xargs -I {} -0 bash -c 'cd `dirname {}` && pwd && sqitch --registry sqitch_test deploy -t db:pg://regular@localhost/productiondb --verify --set schema=test'  # noqa 301
+      register: sqitch_result
+      args:
+        chdir: /home/nomad/reveal
+      become: true
+      become_user: nomad
+    - name: Verify return code
       assert:
-        that: true
+        that: sqitch_result.rc == 0
+
+    - name: Check content of pgpass file
+      replace:
+        path: /home/nomad/pgpass
+        regexp: |
+          localhost:5432:productiondb:admin:hunter2
+          localhost:5432:productiondb:regular:hunter2
+      check_mode: true
+      register: pgpass_exists
+      failed_when: pgpass_exists is changed
+
+    - name: Check content of cron file
+      replace:
+        path: /etc/cron.d/db_user
+        regexp: |
+          PGPORT=5432
+          PGHOST=localhost
+          PGDATABASE=productiondb
+          PGUSER=regular
+          #Ansible: /home/nomad/reveal/3-reveal/jobs/materialized-views/refresh_jurisdictions_materialized_view.sql
+          * * * * * nomad PGOPTIONS=--search_path=test psql -f /home/nomad/reveal/3-reveal/jobs/materialized-views/refresh_jurisdictions_materialized_view.sql >> /var/log/sqitch_migrations/db_user.log 2>&1
+          #Ansible: /home/nomad/reveal/3-reveal/jobs/materialized-views/refresh_plans_materialzied_view.sql
+          0 */2 * * * nomad PGOPTIONS=--search_path=test psql -f /home/nomad/reveal/3-reveal/jobs/materialized-views/refresh_plans_materialzied_view.sql >> /var/log/sqitch_migrations/db_user.log 2>&1
+          #Ansible: /home/nomad/reveal/3-reveal/jobs/materialized-views/refresh_reporting_lag.sql
+          * * * 1 * nomad PGOPTIONS=--search_path=test psql -f /home/nomad/reveal/3-reveal/jobs/materialized-views/refresh_reporting_lag.sql >> /var/log/sqitch_migrations/db_user.log 2>&1
+          #Ansible: /home/nomad/reveal/3-reveal/jobs/materialized-views/refresh_reporting_time.sql
+          * * * * 0 nomad PGOPTIONS=--search_path=test psql -f /home/nomad/reveal/3-reveal/jobs/materialized-views/refresh_reporting_time.sql >> /var/log/sqitch_migrations/db_user.log 2>&1
+      check_mode: true
+      register: cron_exists
+      failed_when: cron_exists is changed
+
+    # the next three tasks will test that periodic queries are successfully run
+    # apparently sometimes we need to manually start cron in the docker service
+    - name: Start cron inside docker container
+      command: cron -L15
+      ignore_errors: true  # because sometimes it is already working
+    # check that our periodic logs run by verifying that logs are created
+    - name: Wait for SQL cron log to be populated
+      wait_for:
+        path: /var/log/sqitch_migrations/db_user.log
+        search_regex: refresh_mat_view  # this comes from one of the queries run in the test
+    # Finally we check that the query was applied correctly in the database
+    # Incidentally, this also confirms that the .pgpass file works okay
+    - name: Verify that periodic SQL query run correctly
+      command: psql -U regular -h localhost -c 'select 1/count(*) from test.materialized_view_tracking' productiondb
+      become: true
+      become_user: nomad
+      register: sql_cron
+      failed_when: sql_cron.rc != 0
+
+    - name: Verify logrotate has been configured
+      replace:
+        path: /etc/logrotate.d/sqitch_migrations
+        regexp: |
+          /var/log/sqitch_migrations/*.log {
+              copytruncate
+              daily
+              rotate 52
+              compress
+              delaycompress
+              missingok
+              notifempty
+          }
+      check_mode: true
+      register: logrotate_exists
+      failed_when: logrotate_exists is changed

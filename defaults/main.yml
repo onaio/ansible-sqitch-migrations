@@ -1,2 +1,58 @@
 ---
-# defaults file for role
+# user
+sqitch_migrations_system_user: nomad
+sqitch_migrations_system_group: nomad
+sqitch_migrations_home: "/home/{{ sqitch_migrations_system_user }}"
+
+# system name
+# this var makes it possible to deploy multiple instances of this role on the same server
+# by giving each a different name so that things such as logs and configs don't class
+sqitch_migrations_sys_name: sqitch_migrations
+
+# logs
+sqitch_migrations_log_path: "/var/log/{{ sqitch_migrations_sys_name }}"  # where to keep logs
+
+# system-wide dependencies
+sqitch_migrations_system_dependencies:
+  - git
+
+# git repositories to clone: the database migrations we want to run are located here
+# sqitch_migrations_repositories:
+#   - url: git@github.com:onaio/data-solutions.git
+#     destination: "{{ sqitch_migrations_home }}/data-solutions"
+#     version: master
+sqitch_migrations_repositories: []
+
+# database connections to use
+# sqitch_migrations_db_connections:
+#   db_admin_user:  --> used to identify this particular connection
+#     user: db_username
+#     password: hunter2
+#     host: localhost
+#     port: 5432
+#     database: dbname
+sqitch_migrations_db_connections: {}
+
+# Files containing SQL queries that should be run BEFORE database migrations
+# sqitch_migrations_sql_for_setup:
+#   db_admin_user:  --> used to identify the db connection to use
+#     - absolute-path-to-file-containing-sql
+sqitch_migrations_sql_for_setup: {}
+
+# The actual Sqitch database migrations to be run
+# sqitch_migrations_sqitch_plans:
+#   db_admin_user:  --> used to identify the db connection to use
+#     - directory: "{{ sqitch_migrations_home }}/data-solutions/examples/sqitch_test"  --> directory in which a sqitch plan is located
+#     - directory: "{{ sqitch_migrations_home }}/data-solutions/1-utils"
+#       registry: sqitch_test --> sqitch registry to use, optional, default is "sqitch"
+#       extra_args: --verify --set schema=test  --> extra args for sqitch deploy command, optional, default is "--verify"
+#       engine: pg  --> sqitch engine, optional, default is "pg"
+sqitch_migrations_sqitch_plans: {}
+
+# Represents files containing SQL queries that should be executed periodically
+# sqitch_migrations_sql_jobs:
+#   db_admin_user:  --> used to identify the db connection to use
+#     - file: "/tmp/test.sql"  -> absolute path to file containing sql to be run periodically
+#       schema: test  -> database schema for this to be run in
+#       minute: "*"  -> cron config for every minute
+sqitch_migrations_sql_jobs: {}

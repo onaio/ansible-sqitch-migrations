@@ -1,2 +1,3 @@
 ---
-# vars file for role
+# Create .pgpass file?
+sqitch_migrations_create_pgpass: true

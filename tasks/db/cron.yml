@@ -1,0 +1,24 @@
+---
+- name: Set cron vars for {{ job.key }}
+  include_tasks: cron_vars.yml
+- name: Ensure log file exists
+  file:
+    state: touch
+    owner: "{{ sqitch_migrations_system_user }}"
+    group: "{{ sqitch_migrations_system_group }}"
+    path: "{{ sqitch_migrations_log_path }}/{{ job.key }}.log"
+- name: Create cron jobs for {{ job.key }}
+  cron:
+    name: "{{ item.file }}"
+    month: "{{ item.month | default('*') }}"
+    weekday: "{{ item.weekday | default('*') }}"
+    day: "{{ item.day | default('*') }}"
+    hour: "{{ item.hour | default('*') }}"
+    minute: "{{ item.minute | default('*') }}"
+    job: "PGOPTIONS=--search_path={{ item.schema | default('public') }} psql -f {{ item.file }} >> {{ sqitch_migrations_log_path }}/{{ job.key }}.log 2>&1"
+    state: present
+    user: "{{ sqitch_migrations_system_user }}"
+    cron_file: "{{ job.key }}"
+  with_items: "{{ job.value }}"
+  loop_control:
+    loop_var: item

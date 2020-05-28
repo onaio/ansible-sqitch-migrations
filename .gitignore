@@ -9,3 +9,5 @@ Icon
 .vagrant
 test
 *.pyc
+.venv
+.tox/

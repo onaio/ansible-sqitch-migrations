@@ -1,0 +1,29 @@
+---
+- name: Set PGUSER
+  cronvar:
+    name: PGUSER
+    value: "{{ sqitch_migrations_db_connections[job.key].user }}"
+    user: "{{ sqitch_migrations_system_user }}"
+    state: present
+    cron_file: "{{ job.key }}"
+- name: Set PGDATABASE
+  cronvar:
+    name: PGDATABASE
+    value: "{{ sqitch_migrations_db_connections[job.key].database }}"
+    user: "{{ sqitch_migrations_system_user }}"
+    state: present
+    cron_file: "{{ job.key }}"
+- name: Set PGHOST
+  cronvar:
+    name: PGHOST
+    value: "{{ sqitch_migrations_db_connections[job.key].host }}"
+    user: "{{ sqitch_migrations_system_user }}"
+    state: present
+    cron_file: "{{ job.key }}"
+- name: Set PGPORT
+  cronvar:
+    name: PGPORT
+    value: "{{ sqitch_migrations_db_connections[job.key].port }}"
+    user: "{{ sqitch_migrations_system_user }}"
+    state: present
+    cron_file: "{{ job.key }}"

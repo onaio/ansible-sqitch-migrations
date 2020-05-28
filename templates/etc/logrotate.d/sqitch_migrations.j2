@@ -1,0 +1,9 @@
+{{ sqitch_migrations_log_path }}/*.log {
+    copytruncate
+    daily
+    rotate 52
+    compress
+    delaycompress
+    missingok
+    notifempty
+}

@@ -14,8 +14,13 @@ jobs:
         with:
           path: "${{ github.repository }}"
 
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+
       - name: Run Molecule tests
-        uses: robertdebock/molecule-action@2.1.0
+        uses: robertdebock/molecule-action@2.3.4
 
   release:
     name: Release

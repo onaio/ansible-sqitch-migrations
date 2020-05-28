@@ -1,0 +1,13 @@
+---
+- name: Clone {{ repo.url }}
+  include_role:
+    name: adamyala.ansible-role-clone-repo
+  vars:
+    ansible_become: false
+    ansible_user: "{{ sqitch_migrations_system_user }}"
+    gh_repo: "{{ repo.url }}"
+    gh_branch: "{{ repo.version }}"
+    dest_dir: "{{ repo.destination }}"
+    dest_dir_owner: "{{ sqitch_migrations_system_user }}"
+    dest_dir_group: "{{ sqitch_migrations_system_group }}"
+    dest_dir_perm: 0755

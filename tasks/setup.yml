@@ -1,0 +1,62 @@
+---
+- name: Add system group
+  group:
+    name: "{{ sqitch_migrations_system_user }}"
+    state: present
+
+- name: Add system user
+  user:
+    name: "{{ sqitch_migrations_system_group }}"
+    shell: /bin/bash
+    group: "{{ sqitch_migrations_system_user }}"
+    append: true
+    create_home: true
+
+- name: Install system-wide dependencies
+  apt:
+    name: "{{ sqitch_migrations_system_dependencies }}"
+    state: present
+    update_cache: true
+    cache_valid_time: "600"
+  when:
+    - sqitch_migrations_system_dependencies | length > 0
+
+- name: Ensure required directories are present
+  file:
+    state: directory
+    owner: "{{ sqitch_migrations_system_user }}"
+    group: "{{ sqitch_migrations_system_group }}"
+    path: "{{ item }}"
+  when:
+    - item is defined
+    - item != None
+  with_items:
+    - "{{ sqitch_migrations_log_path }}"
+
+- name: Copy pgpass credentials
+  template:
+    src: "pgpass.j2"
+    dest: "{{ sqitch_migrations_home }}/.pgpass"
+    owner: "{{ sqitch_migrations_system_user }}"
+    group: "{{ sqitch_migrations_system_group }}"
+    mode: "600"
+  when:
+    - sqitch_migrations_db_connections.values() | length > 0
+    - sqitch_migrations_create_pgpass | bool
+
+- name: Clone repositories
+  include_tasks: clone.yml
+  with_items: '{{ sqitch_migrations_repositories }}'
+  loop_control:
+    loop_var: repo
+  when:
+    - sqitch_migrations_repositories | length > 0
+
+- name: Setup database
+  include_tasks: db/setup.yml
+  loop: '{{ sqitch_migrations_sql_for_setup | dict2items }}'
+  loop_control:
+    loop_var: sql_item
+  when:
+    - sqitch_migrations_db_connections.values() | length > 0
+    - sqitch_migrations_sql_for_setup.values() | length > 0

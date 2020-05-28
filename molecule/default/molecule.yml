@@ -4,7 +4,7 @@ dependency:
 driver:
   name: docker
 platforms:
-  - name: ansible-role-ubuntu-18.04
+  - name: sqitch_migrations-ubuntu-18.04
     image: solita/ubuntu-systemd:18.04
     dockerfile: Dockerfile.j2
     privileged: true
@@ -17,3 +17,19 @@ lint: |
   ansible-lint .
 verifier:
   name: ansible
+scenario:
+  name: default
+  test_sequence:
+    - dependency
+    - lint
+    - cleanup
+    - destroy
+    - syntax
+    - create
+    - prepare
+    - converge
+    # - idempotence
+    - side_effect
+    - verify
+    - cleanup
+    - destroy

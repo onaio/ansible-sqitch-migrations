@@ -1,2 +1,9 @@
 ---
-# tasks file for role
+- include: setup.yml
+  tags: setup
+- include: migrate.yml
+  tags: sqitch, migrations
+- include: jobs.yml
+  tags: jobs, cron
+- include: configure.yml
+  tags: config
