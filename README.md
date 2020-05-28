@@ -126,13 +126,13 @@ sqitch_migrations_sql_jobs:
   db_admin_user:  # used to identify the db connection to use
     - file: "/tmp/test.sql"  # absolute path to file containing sql to be run periodically
       schema: test  # database schema for this to be run in
-      minute: "*5"  # cron config for every 5 minutes
+      minute: "*/5"  # cron config for every 5 minutes
 ```
 
 As you can tell, it is an object/dictionary where each entry contains a list of other objects.  The structure of these inner objects is as follows:
 
 - **file**: absolute path to the sql file
-- **schema**: (Optional) the database schema to use, default is "public
+- **schema**: (Optional) the database schema to use, default is "public"
 - **month**: (Optional) cron config for month, default is "*"
 - **weekday**: (Optional) cron config for weekday, default is "*"
 - **day**: (Optional) cron config for day, default is "*"
