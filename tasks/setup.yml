@@ -27,6 +27,7 @@
     owner: "{{ sqitch_migrations_system_user }}"
     group: "{{ sqitch_migrations_system_group }}"
     path: "{{ item }}"
+    mode: '0644'
   when:
     - item is defined
     - item != None
@@ -39,7 +40,7 @@
     dest: "{{ sqitch_migrations_home }}/.pgpass"
     owner: "{{ sqitch_migrations_system_user }}"
     group: "{{ sqitch_migrations_system_group }}"
-    mode: "600"
+    mode: "0600"
   tags: authentication
   when:
     - sqitch_migrations_db_connections.values() | length > 0
