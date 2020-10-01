@@ -5,3 +5,4 @@
     dest: "{{ repo.destination }}"
     version: "{{ repo.version }}"
     recursive: true
+  tags: git

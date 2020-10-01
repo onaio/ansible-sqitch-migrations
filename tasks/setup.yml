@@ -27,6 +27,7 @@
     owner: "{{ sqitch_migrations_system_user }}"
     group: "{{ sqitch_migrations_system_group }}"
     path: "{{ item }}"
+    mode: 0644
   when:
     - item is defined
     - item != None
@@ -46,7 +47,7 @@
 
 - name: Clone repositories
   include_tasks: clone.yml
-  with_items: '{{ sqitch_migrations_repositories }}'
+  with_items: "{{ sqitch_migrations_repositories }}"
   loop_control:
     loop_var: repo
   when:
@@ -54,7 +55,7 @@
 
 - name: Setup database
   include_tasks: db/setup.yml
-  loop: '{{ sqitch_migrations_sql_for_setup | dict2items }}'
+  loop: "{{ sqitch_migrations_sql_for_setup | dict2items }}"
   loop_control:
     loop_var: sql_item
   when:
