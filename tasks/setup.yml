@@ -27,7 +27,7 @@
     owner: "{{ sqitch_migrations_system_user }}"
     group: "{{ sqitch_migrations_system_group }}"
     path: "{{ item }}"
-    mode: '0644'
+    mode: "0644"
   when:
     - item is defined
     - item != None
