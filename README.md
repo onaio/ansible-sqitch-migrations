@@ -142,7 +142,6 @@ As you can tell, it is an object/dictionary where each entry contains a list of 
 ## Dependencies
 
 - **onaio.sqitch**: for installing sqitch
-- **adamyala.ansible-role-clone-repo**: for cloning git repositories
 
 You can install these by running the following ansible command:
 
