@@ -1,6 +1,6 @@
 ---
 galaxy_info:
-  role_name: "sqitch-migrations"
+  role_name: "sqitch_migrations"
   author: Ona Engineering
   description: Simple role to run database migrations using sqitch
   company: Ona Systems Inc

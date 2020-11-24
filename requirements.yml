@@ -2,6 +2,3 @@
 - name: onaio.sqitch
   src: git+https://github.com/onaio/ansible-sqitch
   version: v1.0.0
-- name: adamyala.ansible-role-clone-repo
-  src: git+https://github.com/adamyala/ansible-role-clone-repo
-  version: 5de19d460af527a5c80d01326a629208008e7c3d

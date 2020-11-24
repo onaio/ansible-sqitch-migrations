@@ -48,7 +48,7 @@
 
 - name: Clone repositories
   include_tasks: clone.yml
-  with_items: '{{ sqitch_migrations_repositories }}'
+  with_items: "{{ sqitch_migrations_repositories }}"
   tags: git
   loop_control:
     loop_var: repo
@@ -57,7 +57,7 @@
 
 - name: Setup database
   include_tasks: db/setup.yml
-  loop: '{{ sqitch_migrations_sql_for_setup | dict2items }}'
+  loop: "{{ sqitch_migrations_sql_for_setup | dict2items }}"
   loop_control:
     loop_var: sql_item
   when:
