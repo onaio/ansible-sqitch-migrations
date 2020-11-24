@@ -7,6 +7,7 @@
     owner: "{{ sqitch_migrations_system_user }}"
     group: "{{ sqitch_migrations_system_group }}"
     path: "{{ sqitch_migrations_log_path }}/{{ job.key }}.log"
+    mode: "0644"
 - name: Create cron jobs for {{ job.key }}
   cron:
     name: "{{ item.file }}"

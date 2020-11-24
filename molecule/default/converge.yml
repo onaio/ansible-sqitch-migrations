@@ -48,7 +48,7 @@
         - sqitch_migrations_repositories:
             - url: https://github.com/OpenSRP/opensrp-reveal-datawarehouse.git
               destination: "{{ sqitch_migrations_home }}/reveal"
-              version: e54ff11badc6b5a1dbde23838bea30dc50b449a5
+              version: v1.2.1
         - sqitch_migrations_db_connections:
             db_admin:
               user: admin

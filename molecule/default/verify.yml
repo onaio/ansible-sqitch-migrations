@@ -53,25 +53,6 @@
       register: cron_exists
       failed_when: cron_exists is changed
 
-    # the next three tasks will test that periodic queries are successfully run
-    # apparently sometimes we need to manually start cron in the docker service
-    - name: Start cron inside docker container
-      command: cron -L15
-      ignore_errors: true  # because sometimes it is already working
-    # check that our periodic logs run by verifying that logs are created
-    - name: Wait for SQL cron log to be populated
-      wait_for:
-        path: /var/log/sqitch_migrations/db_user.log
-        search_regex: refresh_mat_view  # this comes from one of the queries run in the test
-    # Finally we check that the query was applied correctly in the database
-    # Incidentally, this also confirms that the .pgpass file works okay
-    - name: Verify that periodic SQL query run correctly
-      command: psql -U regular -h localhost -c 'select 1/count(*) from test.materialized_view_tracking' productiondb
-      become: true
-      become_user: nomad
-      register: sql_cron
-      failed_when: sql_cron.rc != 0
-
     - name: Verify logrotate has been configured
       replace:
         path: /etc/logrotate.d/sqitch_migrations
