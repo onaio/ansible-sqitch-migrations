@@ -1,6 +1,13 @@
 ---
 - name: Set cron vars for {{ job.key }}
   include_tasks: cron_vars.yml
+- name: Ensure log directory exists
+  file:
+    state: directory
+    owner: "{{ sqitch_migrations_system_user }}"
+    group: "{{ sqitch_migrations_system_group }}"
+    path: "{{ sqitch_migrations_log_path }}"
+    mode: "0755"
 - name: Ensure log file exists
   file:
     state: touch
