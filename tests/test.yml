@@ -1,0 +1,126 @@
+---
+- name: Pre-install stuff
+  hosts: all
+  become: true
+  tasks:
+    - name: Install apt pre-requisites
+      apt:
+        name: ["gnupg", "acl", "python-psycopg2", "python3-psycopg2"]
+        state: present
+        update_cache: true
+        cache_valid_time: 600
+      become: true
+    - name: "Install postgres"
+      include_role:
+        name: "ANXS.postgresql"
+      vars:
+        - postgresql_version: 10
+        - postgresql_ext_install_postgis: true
+        - postgresql_ext_postgis_version: "2.4"
+        - postgresql_ext_postgis_deps:
+            - libgeos-c1v5
+            - "postgresql-{{ postgresql_version }}-postgis-{{ postgresql_ext_postgis_version }}"
+            - "postgresql-{{ postgresql_version }}-postgis-scripts"
+        - postgresql_users:
+            - name: admin
+              pass: hunter2
+              encrypted: true
+            - name: regular
+              pass: hunter2
+              encrypted: true
+        - postgresql_databases:
+            - name: productiondb
+              owner: admin
+        - postgresql_user_privileges:
+            - name: regular
+              db: productiondb
+              priv: "ALL"
+            - name: admin
+              db: productiondb
+              priv: "ALL"
+              role_attr_flags: "SUPERUSER"
+
+- name: Test ansible-sqitch-migrations
+  hosts: all
+  vars:
+    - sqitch_migrations_system_dependencies:
+        - git
+    - sqitch_migrations_repositories:
+        - url: https://github.com/OpenSRP/opensrp-reveal-datawarehouse.git
+          destination: "{{ sqitch_migrations_home }}/reveal"
+          version: v1.2.1
+          public: true
+        - url: https://github.com/onaio/unicef-philippines.git
+          destination: "{{ sqitch_migrations_home }}/reveal"
+          version: master
+          public: false
+    - sqitch_migrations_db_connections:
+        db_admin:
+          user: admin
+          password: hunter2
+          host: localhost
+          port: 5432
+          database: productiondb
+        db_user:
+          user: regular
+          password: hunter2
+          host: localhost
+          port: 5432
+          database: productiondb
+    - sqitch_migrations_sql_for_setup:
+        db_admin:
+          - "{{ sqitch_migrations_home }}/reveal/3-reveal/setup/extensions.sql"
+    - sqitch_migrations_sqitch_plans:
+        db_user:
+          - directory: "{{ sqitch_migrations_home }}/reveal/1-utils"
+            registry: sqitch_test
+            extra_args: --verify --set schema=test
+          - directory: "{{ sqitch_migrations_home }}/reveal/2-common-migrations/1-transaction-tables"
+            registry: sqitch_test
+            extra_args: --verify --set schema=test
+          - directory: "{{ sqitch_migrations_home }}/reveal/2-common-migrations/2-raw-tables"
+            registry: sqitch_test
+            extra_args: --verify --set schema=test
+          - directory: "{{ sqitch_migrations_home }}/reveal/3-reveal/migrations/1-raw_tables"
+            registry: sqitch_test
+            extra_args: --verify --set schema=test
+          - directory: "{{ sqitch_migrations_home }}/reveal/3-reveal/migrations/2-transaction_tables"
+            registry: sqitch_test
+            extra_args: --verify --set schema=test
+          - directory: "{{ sqitch_migrations_home }}/reveal/3-reveal/migrations/3-views"
+            registry: sqitch_test
+            extra_args: --verify --set schema=test
+          - directory: "{{ sqitch_migrations_home }}/reveal/3-reveal/migrations/4-FI/1-Thailand-2019"
+            registry: sqitch_test
+            extra_args: --verify --set schema=test
+          - directory: "{{ sqitch_migrations_home }}/reveal/3-reveal/migrations/5-IRS/1-generic"
+            registry: sqitch_test
+            extra_args: --verify --set schema=test
+          - directory: "{{ sqitch_migrations_home }}/reveal/3-reveal/migrations/5-IRS/2-Zambia-2019"
+            registry: sqitch_test
+            extra_args: --verify --set schema=test
+          - directory: "{{ sqitch_migrations_home }}/reveal/3-reveal/migrations/5-IRS/3-Namibia-2019"
+            registry: sqitch_test
+            extra_args: --verify --set schema=test
+          - directory: "{{ sqitch_migrations_home }}/reveal/3-reveal/migrations/99-monitoring"
+            registry: sqitch_test
+            extra_args: --verify --set schema=test
+    - sqitch_migrations_sql_jobs:
+        db_user:
+          - file: "{{ sqitch_migrations_home }}/reveal/3-reveal/jobs/materialized-views/refresh_jurisdictions_materialized_view.sql"
+            schema: test
+            minute: "*"
+          - file: "{{ sqitch_migrations_home }}/reveal/3-reveal/jobs/materialized-views/refresh_plans_materialzied_view.sql"
+            schema: test
+            minute: "0"
+            hour: "*/2"
+          - file: "{{ sqitch_migrations_home }}/reveal/3-reveal/jobs/materialized-views/refresh_reporting_lag.sql"
+            schema: test
+            month: "1"
+          - file: "{{ sqitch_migrations_home }}/reveal/3-reveal/jobs/materialized-views/refresh_reporting_time.sql"
+            schema: test
+            weekday: "0"
+  gather_facts: true
+  become: true
+  roles:
+    - role: ../..
