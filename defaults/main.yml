@@ -2,6 +2,7 @@
 # user
 sqitch_migrations_system_user: nomad
 sqitch_migrations_system_group: nomad
+sqitch_migrations_local_system_user: ubuntu
 sqitch_migrations_home: "/home/{{ sqitch_migrations_system_user }}"
 
 # system name
@@ -22,6 +23,9 @@ sqitch_migrations_system_dependencies:
 #     destination: "{{ sqitch_migrations_home }}/data-solutions"
 #     version: master
 sqitch_migrations_repositories: []
+
+# local directory to temporarily clone to
+sqitch_local_clone_directory: "/tmp/data-solutions/"
 
 # database connections to use
 # sqitch_migrations_db_connections:
