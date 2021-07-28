@@ -6,24 +6,22 @@
     version: "{{ repo.version }}"
     recursive: true
   tags: git
-  when: (repo.public is defined) or (repo.public)
+  when: repo.public
 
 - block:
     - name: Ensure local clone directory exists
       file:
         state: directory
         path: "{{ sqitch_local_clone_directory }}"
-        owner: "{{ sqitch_migrations_local_system_user }}"
+        owner: "{{ lookup('env', 'USER') }}"
         mode: "0644"
       delegate_to: 127.0.0.1
-      become: false
     - name: Ensure local clone directory is empty
       file:
         state: absent
         path: "{{ sqitch_local_clone_directory }}"
-        owner: "{{ sqitch_migrations_local_system_user }}"
+        owner: "{{ lookup('env', 'USER') }}"
       delegate_to: 127.0.0.1
-      become: false
     - name: Clone {{ repo.url }} to local clone directory
       git:
         repo: "{{ repo.url }}"
@@ -32,7 +30,6 @@
         recursive: true
       tags: git
       delegate_to: 127.0.0.1
-      become: false
     - name: Copy repo to remote host
       copy:
         src: "{{ sqitch_local_clone_directory }}"
@@ -40,11 +37,12 @@
         owner: "{{ sqitch_migrations_system_user }}"
         group: "{{ sqitch_migrations_system_group }}"
         mode: "0644"
+      become: true
     - name: Ensure local clone directory is empty
       file:
         state: absent
         path: "{{ sqitch_local_clone_directory }}"
-        owner: "{{ sqitch_migrations_local_system_user }}"
+        owner: "{{ lookup('env', 'USER') }}"
       delegate_to: 127.0.0.1
-      become: false
+  become: false
   when: not repo.public

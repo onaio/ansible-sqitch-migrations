@@ -46,14 +46,15 @@
     - sqitch_migrations_system_dependencies:
         - git
     - sqitch_migrations_repositories:
+        - url: https://github.com/onaio/unicef-philippines.git
+          destination: "{{ sqitch_migrations_home }}/reveal"
+          version: main
+          public: false
         - url: https://github.com/OpenSRP/opensrp-reveal-datawarehouse.git
           destination: "{{ sqitch_migrations_home }}/reveal"
           version: v1.2.1
           public: true
-        - url: https://github.com/onaio/unicef-philippines.git
-          destination: "{{ sqitch_migrations_home }}/reveal"
-          version: master
-          public: false
+
     - sqitch_migrations_db_connections:
         db_admin:
           user: admin

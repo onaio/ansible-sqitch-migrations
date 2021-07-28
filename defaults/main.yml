@@ -2,7 +2,6 @@
 # user
 sqitch_migrations_system_user: nomad
 sqitch_migrations_system_group: nomad
-sqitch_migrations_local_system_user: ubuntu
 sqitch_migrations_home: "/home/{{ sqitch_migrations_system_user }}"
 
 # system name
@@ -22,6 +21,7 @@ sqitch_migrations_system_dependencies:
 #   - url: git@github.com:onaio/data-solutions.git
 #     destination: "{{ sqitch_migrations_home }}/data-solutions"
 #     version: master
+#     public: false
 sqitch_migrations_repositories: []
 
 # local directory to temporarily clone to
