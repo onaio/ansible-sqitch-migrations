@@ -63,6 +63,7 @@ sqitch_migrations_repositories:
   - url: git@github.com:onaio/data-solutions.git
     destination: "{{ sqitch_migrations_home }}/data-solutions"
     version: master
+    public: true # whether repository is public or not
 ```
 
 ### sqitch_migrations_db_connections
@@ -162,9 +163,11 @@ ansible-galaxy install -r requirements.yml
             - url: git@github.com:onaio/data-solutions.git
               destination: "{{ sqitch_migrations_home }}/data-solutions"
               version: master
+              public: false
             - url: git@github.com:OpenSRP/opensrp-reveal-datawarehouse.git
               destination: "{{ sqitch_migrations_home }}/reveal-datawarehouse"
               version: master
+              public:true
         - sqitch_migrations_db_connections:
             db_admin:
               user: admin
