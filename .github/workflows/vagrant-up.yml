@@ -12,10 +12,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Set up Python 3.8
+      - name: Set up Python 3.6
         uses: actions/setup-python@v2
         with:
-          python-version: 3.6.3
+          python-version: 3.6
 
       - name: Cache pip
         uses: actions/cache@v2
@@ -38,8 +38,8 @@ jobs:
           key: ${{ runner.os }}-vagrant-${{ hashFiles('Vagrantfile') }}
           restore-keys: |
             ${{ runner.os }}-vagrant-
-      - run: vagrant --version
-      - run: ansible --version
 
       - name: Run vagrant up
         run: vagrant up
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
